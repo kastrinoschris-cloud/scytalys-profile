@@ -1,0 +1,88 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.85rem;
+  line-height: 1.15;
+}
+
+.intro {
+  margin: 0;
+  color: var(--muted);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.control {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--field-bg);
+  color: inherit;
+  font: inherit;
+}
+
+.control:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.controlInvalid {
+  border-color: var(--error);
+}
+
+.textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.select:has(option[value='']:checked) {
+  color: var(--muted);
+}
+
+.fieldMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.counter {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 400;
+}

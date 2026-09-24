@@ -1,0 +1,6 @@
+.app {
+  width: min(40rem, 100%);
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+  box-sizing: border-box;
+}
