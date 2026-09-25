@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getCountries } from '../lib/countries';
 import { validateProfile } from '../lib/validateProfile';
 import { FieldError } from './FieldError';
+import { SkillsList } from './SkillsList';
 import styles from './ProfileForm.module.css';
 
 const AUTOSAVE_DELAY_MS = 500;
@@ -14,6 +15,7 @@ const INITIAL_VALUES = {
   bio: '',
   dateOfBirth: '',
   newsletter: false,
+  skills: [],
 };
 
 export const ProfileForm = () => {
@@ -44,7 +46,7 @@ export const ProfileForm = () => {
     return () => clearTimeout(timeoutId);
   }, [values, hasEdited]);
 
-  function handleChange(event) {
+  const handleChange = (event) => {
     const { name, type, checked, value } = event.target;
     setHasEdited(true);
     setValues((current) => ({
@@ -53,15 +55,20 @@ export const ProfileForm = () => {
     }));
   }
 
+  const handleSkillsChange = useCallback((skills) => {
+    setHasEdited(true);
+    setValues((current) => ({ ...current, skills }));
+  }, []);
+
   // Just prevent default (form refresh) if the user tries to submit the form by pressing "Enter" on their keyboard.
-  function handleSubmit(event) {
+  const handleSubmit = (event) => {
     event.preventDefault();
   }
 
   return (
     <form className={styles.form} noValidate onSubmit={handleSubmit}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Profile</h1>
+        <h1 className={styles.title}>Profile Information</h1>
         <p className={styles.intro}>Fields marked with * are required.</p>
       </header>
       <div className={styles.field}>
@@ -168,6 +175,7 @@ export const ProfileForm = () => {
           Subscribe to our newsletter
         </label>
       </div>
+      <SkillsList skills={values.skills} onChange={handleSkillsChange} />
     </form>
   );
 };

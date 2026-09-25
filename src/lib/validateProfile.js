@@ -47,6 +47,7 @@ export const profileSchema = yup.object({
       return value <= calculateBirthdayThreshold();
     }),
   newsletter: yup.boolean(),
+  skills: yup.array(),
 });
 
 export function validateProfile(values) {
