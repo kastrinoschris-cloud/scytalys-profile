@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getCountries } from '../lib/countries';
+import { saveProfile } from '../lib/saveProfile';
 import { validateProfile } from '../lib/validateProfile';
 import { FieldError } from './FieldError';
 import { SkillsList } from './SkillsList';
@@ -18,21 +19,30 @@ const INITIAL_VALUES = {
   skills: [],
 };
 
+const STATUS_LABELS = {
+  idle: '',
+  saving: 'Saving...',
+  saved: 'Saved',
+  error: 'Error saving',
+};
+
 export const ProfileForm = () => {
   const [values, setValues] = useState(INITIAL_VALUES);
   const [errors, setErrors] = useState({});
   // hasEdited is used to prevent form validation on initial load. Without it, errors would be immediately displayed, without any user interaction.
   const [hasEdited, setHasEdited] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('idle');
   const countries = useMemo(() => getCountries(), []);
+  const abortControllerRef = useRef(null);
 
   // Debouncing to prevent unnecessary saves.
-  // Form validation could be moved outside the setTimeout for instant display of errors but I find it a bit weird looking and it would also re-validate the entire form on every keystroke.
   useEffect(() => {
     if (!hasEdited) {
       return undefined;
     }
-    
-    const timeoutId = setTimeout(() => {
+
+    const timeoutId = setTimeout(async () => {
+      // Form validation could be moved outside the setTimeout for instant display of errors but I find it a bit weird looking and it would also re-validate the entire form on every keystroke.
       const nextErrors = validateProfile(values);
       setErrors(nextErrors);
 
@@ -40,10 +50,24 @@ export const ProfileForm = () => {
         return;
       }
 
-      // TODO: Actual save functionality to be added here
+      abortControllerRef.current?.abort();
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      setSaveStatus('saving');
+
+      try {
+        await saveProfile(values, controller.signal);
+        setSaveStatus('saved');
+      } catch (error) {
+        if (error.name === 'AbortError') return;
+        setSaveStatus('error');
+      }
     }, AUTOSAVE_DELAY_MS);
 
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(timeoutId);
+      abortControllerRef.current?.abort();
+    };
   }, [values, hasEdited]);
 
   const handleChange = (event) => {
@@ -53,7 +77,7 @@ export const ProfileForm = () => {
       ...current,
       [name]: type === 'checkbox' ? checked : value,
     }));
-  }
+  };
 
   const handleSkillsChange = useCallback((skills) => {
     setHasEdited(true);
@@ -63,12 +87,19 @@ export const ProfileForm = () => {
   // Just prevent default (form refresh) if the user tries to submit the form by pressing "Enter" on their keyboard.
   const handleSubmit = (event) => {
     event.preventDefault();
-  }
+  };
+
+  const statusClass = saveStatus === 'error' ? `${styles.status} ${styles.statusError}` : saveStatus === 'saved' ? `${styles.status} ${styles.statusSuccess}` : styles.status;
 
   return (
     <form className={styles.form} noValidate onSubmit={handleSubmit}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Profile Information</h1>
+        <div className={styles.headerRow}>
+          <h1 className={styles.title}>Profile Information</h1>
+          <p className={statusClass}>
+            {STATUS_LABELS[saveStatus]}
+          </p>
+        </div>
         <p className={styles.intro}>Fields marked with * are required.</p>
       </header>
       <div className={styles.field}>
