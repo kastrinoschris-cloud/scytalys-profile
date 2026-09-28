@@ -1,9 +1,9 @@
 import styles from './FieldError.module.css';
 
-export const FieldError = ({ message }) => {
+export const FieldError = ({ id, message }) => {
   return (
-    <p className={styles.error}>
+    <p id={id} className={styles.error}>
       {message}
     </p>
   );
-}
+};

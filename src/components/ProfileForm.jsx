@@ -96,7 +96,7 @@ export const ProfileForm = () => {
       <header className={styles.header}>
         <div className={styles.headerRow}>
           <h1 className={styles.title}>Profile Information</h1>
-          <p className={statusClass}>
+          <p className={statusClass} aria-live="polite">
             {STATUS_LABELS[saveStatus]}
           </p>
         </div>
@@ -110,9 +110,11 @@ export const ProfileForm = () => {
           className={errors.fullName ? `${styles.control} ${styles.controlInvalid}` : styles.control}
           type="text"
           value={values.fullName}
+          aria-invalid={Boolean(errors.fullName)}
+          aria-describedby={errors.fullName ? 'fullName-error' : undefined}
           onChange={handleChange}
         />
-        <FieldError message={errors.fullName} />
+        <FieldError id="fullName-error" message={errors.fullName} />
       </div>
       <div className={styles.field}>
         <label className={styles.label} htmlFor="email">Email *</label>
@@ -123,9 +125,11 @@ export const ProfileForm = () => {
           type="email"
           inputMode="email"
           value={values.email}
+          aria-invalid={Boolean(errors.email)}
+          aria-describedby={errors.email ? 'email-error' : undefined}
           onChange={handleChange}
         />
-        <FieldError message={errors.email} />
+        <FieldError id="email-error" message={errors.email} />
       </div>
       <div className={styles.field}>
         <label className={styles.label} htmlFor="phone">Phone</label>
@@ -137,9 +141,11 @@ export const ProfileForm = () => {
           inputMode="tel"
           placeholder="+30 698 123 4567"
           value={values.phone}
+          aria-invalid={Boolean(errors.phone)}
+          aria-describedby={errors.phone ? 'phone-error' : undefined}
           onChange={handleChange}
         />
-        <FieldError message={errors.phone} />
+        <FieldError id="phone-error" message={errors.phone} />
       </div>
       <div className={styles.field}>
         <label className={styles.label} htmlFor="country">Country *</label>
@@ -152,6 +158,8 @@ export const ProfileForm = () => {
               : `${styles.control} ${styles.select}`
           }
           value={values.country}
+          aria-invalid={Boolean(errors.country)}
+          aria-describedby={errors.country ? 'country-error' : undefined}
           onChange={handleChange}
         >
           <option value="" disabled>
@@ -163,7 +171,7 @@ export const ProfileForm = () => {
             </option>
           ))}
         </select>
-        <FieldError message={errors.country} />
+        <FieldError id="country-error" message={errors.country} />
       </div>
       <div className={styles.field}>
         <label className={styles.label} htmlFor="bio">Bio</label>
@@ -174,15 +182,17 @@ export const ProfileForm = () => {
           maxLength={500}
           rows={5}
           value={values.bio}
+          aria-invalid={Boolean(errors.bio)}
+          aria-describedby={errors.bio ? 'bio-error' : undefined}
           onChange={handleChange}
         />
         <div className={styles.fieldMeta}>
           <p id="bio-count" className={styles.counter}>{values.bio.length}/500</p>
         </div>
-        <FieldError message={errors.bio} />
+        <FieldError id="bio-error" message={errors.bio} />
       </div>
       <div className={styles.field}>
-        <label className={styles.label}>Date of birth *</label>
+        <label className={styles.label} htmlFor="dateOfBirth">Date of birth *</label>
         <input
           id="dateOfBirth"
           name="dateOfBirth"
@@ -190,9 +200,11 @@ export const ProfileForm = () => {
           type="date"
           min="1900-01-01"
           value={values.dateOfBirth}
+          aria-invalid={Boolean(errors.dateOfBirth)}
+          aria-describedby={errors.dateOfBirth ? 'dateOfBirth-error' : undefined}
           onChange={handleChange}
         />
-        <FieldError message={errors.dateOfBirth} />
+        <FieldError id="dateOfBirth-error" message={errors.dateOfBirth} />
       </div>
       <div className={styles.field}>
         <label className={styles.checkbox}>
